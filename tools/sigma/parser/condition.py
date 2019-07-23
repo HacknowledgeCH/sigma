@@ -118,7 +118,8 @@ class SigmaConditionTokenizer:
             (SigmaConditionToken.TOKEN_AND,    re.compile("and", re.IGNORECASE)),
             (SigmaConditionToken.TOKEN_OR,     re.compile("or", re.IGNORECASE)),
             (SigmaConditionToken.TOKEN_NOT,    re.compile("not", re.IGNORECASE)),
-            (SigmaConditionToken.TOKEN_ID,     re.compile("[\\w*]+")),
+            # comma-separated values to support grouping by multiple fields
+            (SigmaConditionToken.TOKEN_ID,     re.compile("[\\w*]+(,[\\w*]+)*")),
             (SigmaConditionToken.TOKEN_LPAR,   re.compile("\\(")),
             (SigmaConditionToken.TOKEN_RPAR,   re.compile("\\)")),
             ]

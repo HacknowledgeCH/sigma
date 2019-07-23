@@ -758,8 +758,14 @@ class ElastalertBackend(MultiRuleOutputMixin):
             #Handle aggregation
             if parsed.parsedAgg:
                 if parsed.parsedAgg.aggfunc == sigma.parser.condition.SigmaAggregationParser.AGGFUNC_COUNT or parsed.parsedAgg.aggfunc == sigma.parser.condition.SigmaAggregationParser.AGGFUNC_MIN or parsed.parsedAgg.aggfunc == sigma.parser.condition.SigmaAggregationParser.AGGFUNC_MAX or parsed.parsedAgg.aggfunc == sigma.parser.condition.SigmaAggregationParser.AGGFUNC_AVG or parsed.parsedAgg.aggfunc == sigma.parser.condition.SigmaAggregationParser.AGGFUNC_SUM:
-                    if parsed.parsedAgg.groupfield is not None:
-                        rule_object['query_key'] = self.fieldNameMapping(parsed.parsedAgg.groupfield, '*')
+                    group_field = parsed.parsedAgg.groupfield
+                    if group_field is not None:
+                        # Handle grouping by multiple fields
+                        group_fields = group_field.split(',')
+                        if len(group_fields) > 1:
+                            rule_object['query_key'] = [self.fieldNameMapping(x, '*') for x in group_fields]
+                        else:
+                            rule_object['query_key'] = self.fieldNameMapping(parsed.parsedAgg.groupfield, '*')
                     rule_object['type'] = "metric_aggregation"
                     rule_object['buffer_time'] = interval
                     rule_object['doc_type'] = "doc"
